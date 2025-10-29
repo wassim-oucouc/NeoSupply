@@ -1,18 +1,13 @@
-package org.example.neosupply.entity;
+package org.example.neosupply.dto.request;
 
-
-import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import org.example.neosupply.enumeration.Role;
 
-@Entity
-@Getter
-@Setter
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Users {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
+
+@Data
+public class UsersDTO {
+
     private Long id;
     private String prenom;
     private String nom;
@@ -20,5 +15,4 @@ public class Users {
     private String password;
     private Role role;
     private Boolean active;
-
 }
