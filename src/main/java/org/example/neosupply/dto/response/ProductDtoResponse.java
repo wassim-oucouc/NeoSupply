@@ -1,4 +1,4 @@
-package org.example.neosupply.dto.request;
+package org.example.neosupply.dto.response;
 
 
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductDTO {
+public class ProductDtoResponse {
 
     private Long id;
     private String sku;
