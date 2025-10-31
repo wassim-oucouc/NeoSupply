@@ -1,8 +1,11 @@
 package org.example.neosupply.dto.request;
 
+import lombok.Data;
 import org.example.neosupply.entity.Product;
 import org.example.neosupply.entity.Warehouse;
 
+
+@Data
 public class InventoryDTO {
 
     private Long id;
