@@ -45,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
             product.setActive(productDTO.isActive());
             product.setDescription(productDTO.getDescription());
             this.productRepository.save(product);
+        System.out.println("hello");
 
             return this.productMapper.toDtoResponse(product);
     }
