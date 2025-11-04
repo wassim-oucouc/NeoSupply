@@ -18,8 +18,10 @@ public class SalesOrder {
     private SOStatus status;
     private Instant createdAt;
 
-    @OneToOne
-    private Shipment shipment;
+    @ManyToOne
+    private Clients client;
+    @ManyToOne
+    private Warehouse warehouse;
 
 
 

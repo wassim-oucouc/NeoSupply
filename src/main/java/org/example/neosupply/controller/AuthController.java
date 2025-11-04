@@ -46,8 +46,13 @@ public class AuthController {
 
        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
         httpSession.setAttribute("user",userDtoResponse);
-        return ResponseEntity.ok().body(Map.of("success","login with sucess"));
+        return ResponseEntity.ok().body(httpSession.getId());
+    }
 
 
+    @PostMapping("/test/session")
+    public Object getSession(@RequestBody Map<String,String> session,HttpSession httpSession)
+    {
+        return httpSession.getAttribute("user");
     }
 }

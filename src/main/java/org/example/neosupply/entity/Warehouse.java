@@ -1,10 +1,7 @@
 package org.example.neosupply.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +16,7 @@ public class Warehouse {
     private String code;
     private String name;
     private String location;
+
+    @ManyToOne
+    private Users warehouseManager;
 }

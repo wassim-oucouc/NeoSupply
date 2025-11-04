@@ -6,11 +6,13 @@ import org.example.neosupply.dto.response.InventoryDtoResponse;
 import org.example.neosupply.dto.response.ProductDtoResponse;
 import org.example.neosupply.entity.Inventory;
 import org.example.neosupply.entity.Product;
+import org.example.neosupply.exceptions.InventoryNotFoudException;
 import org.example.neosupply.exceptions.ProductNotFoundException;
 import org.example.neosupply.mapper.InventoryMapper;
 import org.example.neosupply.repository.InventoryRepository;
 import org.example.neosupply.repository.ProductRepository;
 import org.example.neosupply.repository.WarehouseRepository;
+import org.example.neosupply.service.InventoryService;
 import org.example.neosupply.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class InventoryServiceImpl {
+public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryRepository inventoryRepository;
     private InventoryMapper inventoryMapper;
@@ -42,7 +44,7 @@ public class InventoryServiceImpl {
 
     public InventoryDtoResponse updateInventoryById(InventoryDTO inventoryDTO, Long id)
     {
-        Inventory inventory = this.inventoryRepository.findById(id).orElseThrow(() ->  new ProductNotFoundException("product not exists"));
+        Inventory inventory = this.inventoryRepository.findById(id).orElseThrow(() ->  new InventoryNotFoudException("Inventory not exists"));
 
         inventory.setProduct(this.productRepository.findProductById(inventoryDTO.getProductId()));
         inventory.setWarehouse(this.warehouseRepository.findWarehouseById((inventoryDTO.getWarehouseId())));
@@ -60,7 +62,7 @@ public class InventoryServiceImpl {
 
     public InventoryDtoResponse findInventoryById(Long id)
     {
-        Inventory inventory =  this.inventoryRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("product not exists"));
+        Inventory inventory =  this.inventoryRepository.findById(id).orElseThrow(() -> new InventoryNotFoudException("Inventory not exists"));
 
         return  this.inventoryMapper.toDtoResponse(inventory);
     }
