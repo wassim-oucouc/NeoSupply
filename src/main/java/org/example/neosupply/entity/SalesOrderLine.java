@@ -18,6 +18,7 @@ public class SalesOrderLine {
     private Long id;
     private int quantity;
     private double price;
+    private int quantityToOrder;
 
 
     @ManyToOne

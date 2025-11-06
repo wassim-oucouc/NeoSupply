@@ -19,4 +19,9 @@ public interface InventoryService {
     public InventoryDtoResponse findInventoryById(Long id);
 
     public List<InventoryDtoResponse> getAllProducts();
+
+    public Integer getProductQuantityByWarehouse(Long productId,Long warehouseId);
+    public List<InventoryDtoResponse> getInventoriesByProductId(Long productId);
+    public InventoryDtoResponse findInventoryByProductIdAndWarehouseId(Long warehouseId,Long productId);
+
 }

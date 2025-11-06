@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,9 +17,11 @@ public class PurchaseOrderLine{
     private Long id;
     private Long quantity;
     private BigDecimal unitPrice;
+    private int quantityToOrder;
 
-    @OneToMany
-    private List<Product> product;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne
     private PurchaseOrder purchaseOrder;

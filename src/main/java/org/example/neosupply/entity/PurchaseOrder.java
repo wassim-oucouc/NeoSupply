@@ -4,6 +4,7 @@ package org.example.neosupply.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.neosupply.enumeration.POStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +18,7 @@ public class PurchaseOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate orderDate;
-    private String status;
+   private POStatus status;
 
     @ManyToOne
     private Supplier supplier;

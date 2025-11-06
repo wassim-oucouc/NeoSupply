@@ -37,7 +37,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductDtoResponse updateProductById(ProductDTO productDTO,Long id)
     {
         Product product = this.productRepository.findById(id).orElseThrow(() ->  new ProductNotFoundException("product not exists"));
-
             product.setId(id);
             product.setName(productDTO.getName());
             product.setSku(productDTO.getSku());

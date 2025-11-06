@@ -1,0 +1,17 @@
+package org.example.neosupply.dto.response;
+
+import lombok.Data;
+import org.example.neosupply.entity.Supplier;
+
+import java.time.LocalDate;
+
+
+@Data
+public class PurchaseOrderDtoResponse {
+
+    private Long id;
+    private LocalDate orderDate;
+    private String status;
+
+    private SupplierDtoResponse supplierDtoResponse;
+}

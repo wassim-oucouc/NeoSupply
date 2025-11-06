@@ -8,6 +8,7 @@ import org.example.neosupply.entity.Inventory;
 import org.example.neosupply.entity.Product;
 import org.example.neosupply.exceptions.InventoryNotFoudException;
 import org.example.neosupply.exceptions.ProductNotFoundException;
+import org.example.neosupply.exceptions.WarehouseNotFoundException;
 import org.example.neosupply.mapper.InventoryMapper;
 import org.example.neosupply.repository.InventoryRepository;
 import org.example.neosupply.repository.ProductRepository;
@@ -47,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = this.inventoryRepository.findById(id).orElseThrow(() ->  new InventoryNotFoudException("Inventory not exists"));
 
         inventory.setProduct(this.productRepository.findProductById(inventoryDTO.getProductId()));
-        inventory.setWarehouse(this.warehouseRepository.findWarehouseById((inventoryDTO.getWarehouseId())));
+        inventory.setWarehouse(this.warehouseRepository.findWarehouseById((inventoryDTO.getWarehouseId())).orElseThrow(() -> new WarehouseNotFoundException("Warehouse not Found")));
         inventory.setQuantityReserved(inventoryDTO.getQuantityReserved());
         inventory.setQuantityOnHand(inventoryDTO.getQuantityOnHand());
         this.inventoryRepository.save(inventory);
@@ -70,6 +71,21 @@ public class InventoryServiceImpl implements InventoryService {
     public List<InventoryDtoResponse> getAllProducts()
     {
         return this.inventoryRepository.findAll().stream().map(inventoryMapper::toDtoResponse).toList();
+    }
+
+    public Integer getProductQuantityByWarehouse(Long productId,Long warehouseId)
+    {
+       return this.inventoryRepository.findQuantityByProductIdAndWarehouse_Id(productId,warehouseId);
+    }
+    public InventoryDtoResponse findInventoryByProductIdAndWarehouseId(Long warehouseId,Long productId)
+    {
+        Inventory inventory = this.inventoryRepository.findInventoryByProduct_IdAndWarehouse_Id(productId,warehouseId);
+       return this.inventoryMapper.toDtoResponse(inventory);
+    }
+
+    public List<InventoryDtoResponse> getInventoriesByProductId(Long productId)
+    {
+        return this.inventoryRepository.findInventoryByProduct_Id(productId).stream().map(inventoryMapper::toDtoResponse).toList();
     }
 
 

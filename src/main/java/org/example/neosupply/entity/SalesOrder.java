@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.example.neosupply.enumeration.SOStatus;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,9 +20,12 @@ public class SalesOrder {
     private Instant createdAt;
 
     @ManyToOne
-    private Clients client;
+    private Users client;
     @ManyToOne
     private Warehouse warehouse;
+
+    @OneToMany
+    private List<SalesOrderLine> salesOrderLines;
 
 
 
