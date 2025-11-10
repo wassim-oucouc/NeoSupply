@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.example.neosupply.enumeration.POStatus;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,11 +19,12 @@ public class PurchaseOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate orderDate;
+    @Enumerated(EnumType.STRING)
    private POStatus status;
 
     @ManyToOne
     private Supplier supplier;
 
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL)
-    private List<PurchaseOrderLine> lines;
+    private List<PurchaseOrderLine> lines = new ArrayList<>();
 }

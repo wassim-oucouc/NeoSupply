@@ -27,7 +27,8 @@ public abstract class InventoryMapper {
     @Mapping(source = "productId", target = "product")
     @Mapping(source = "warehouseId", target = "warehouse")
     public abstract Inventory toEntity(InventoryDTO dto);
-
+    @Mapping(source = "product", target = "productDtoResponse")
+    @Mapping(source = "warehouse", target = "warehouseDtoResponse")
     public abstract InventoryDtoResponse toDtoResponse(Inventory inventory);
 
     protected Product mapProduct(Long id) {

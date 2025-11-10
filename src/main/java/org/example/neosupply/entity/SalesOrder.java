@@ -16,7 +16,9 @@ public class SalesOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private SOStatus status;
+
     private Instant createdAt;
 
     @ManyToOne
@@ -24,7 +26,7 @@ public class SalesOrder {
     @ManyToOne
     private Warehouse warehouse;
 
-    @OneToMany
+    @OneToMany(mappedBy = "salesOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SalesOrderLine> salesOrderLines;
 
 

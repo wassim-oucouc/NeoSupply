@@ -4,9 +4,12 @@ import org.example.neosupply.dto.request.InventoryDTO;
 import org.example.neosupply.dto.request.InventoryMovementDTO;
 import org.example.neosupply.dto.request.PurchaseOrderDTO;
 import org.example.neosupply.dto.request.PurchaseOrderLineDTO;
+import org.example.neosupply.dto.response.InventoryDtoResponse;
 import org.example.neosupply.dto.response.PurchaseOrderDtoResponse;
 import org.example.neosupply.entity.*;
 import org.example.neosupply.enumeration.POStatus;
+import org.example.neosupply.enumeration.SOStatus;
+import org.example.neosupply.exceptions.InventoryNotFoudException;
 import org.example.neosupply.exceptions.PurchaseOrderNotFoundException;
 import org.example.neosupply.exceptions.QuantityNotEqualZeroException;
 import org.example.neosupply.mapper.InventoryMapper;
@@ -25,9 +28,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.example.neosupply.enumeration.MovementType.INBOUND;
 
+@Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 
@@ -94,24 +99,82 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     }
 
-    public PurchaseOrderDtoResponse approvePurchaseOrder(Long id,Long warehouseId)
+    public PurchaseOrderDtoResponse approvePurchaseOrder(Long id, Long warehouseId) {
+        PurchaseOrder purchaseOrder = this.purchaseOrderRepository.findById(id)
+                .orElseThrow(() -> new PurchaseOrderNotFoundException("purchase order not found id : " + id));
+
+        purchaseOrder.setStatus(POStatus.APPROVED);
+
+        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrder.getLines();
+
+        for (PurchaseOrderLine purchasesLine : purchaseOrderLines) {
+
+            Optional<InventoryDtoResponse> existingInventoryOpt = inventoryService.findInventoryByProductIdAndWarehouseId(
+                    purchasesLine.getProduct().getId(), warehouseId);
+
+            if (existingInventoryOpt.isPresent()) {
+                InventoryDtoResponse existingInventory = existingInventoryOpt.get();
+                existingInventory.setQuantityOnHand(
+                        Math.toIntExact(existingInventory.getQuantityOnHand() + purchasesLine.getQuantity())
+                );
+                InventoryDTO inventoryDTOCreate = InventoryDTO.builder().id(existingInventory.getId()).productId(existingInventory.getProductDtoResponse().getId()).quantityReserved(existingInventory.getQuantityReserved()).quantityOnHand(existingInventory.getQuantityOnHand()).WarehouseId(existingInventory.getWarehouseDtoResponse().getId()).build();
+                InventoryMovementDTO inventoryMovementDTO = InventoryMovementDTO.builder()
+                        .movementDate(LocalDateTime.now())
+                        .type(INBOUND)
+                        .warehouseId(warehouseId)
+                        .productId(purchasesLine.getProduct().getId())
+                        .quantity(Math.toIntExact(purchasesLine.getQuantity()))
+                        .build();
+                this.inventoryService.updateInventoryById(inventoryDTOCreate, existingInventory.getId());
+                this.inventoryMovementService.createInventoryMovement(inventoryMovementDTO);
+            } else {
+
+                InventoryDTO inventoryDTO = InventoryDTO.builder()
+                        .productId(purchasesLine.getProduct().getId())
+                        .WarehouseId(warehouseId)
+                        .quantityOnHand(Math.toIntExact(purchasesLine.getQuantity()))
+                        .build();
+
+
+                InventoryMovementDTO inventoryMovementDTO = InventoryMovementDTO.builder()
+                        .movementDate(LocalDateTime.now())
+                        .type(INBOUND)
+                        .warehouseId(warehouseId)
+                        .productId(purchasesLine.getProduct().getId())
+                        .quantity(Math.toIntExact(purchasesLine.getQuantity()))
+                        .build();
+
+                this.inventoryService.createInventory(inventoryDTO);
+
+                this.inventoryMovementService.createInventoryMovement(inventoryMovementDTO);
+            }
+        }
+
+        this.purchaseOrderRepository.save(purchaseOrder);
+
+        return this.purchaseOrderMapper.toDtoResponse(purchaseOrder);
+    }
+
+    public PurchaseOrderDtoResponse cancelPurchaseOrder(Long id)
     {
-      PurchaseOrder purchaseOrder =   this.purchaseOrderRepository.findById(id).orElseThrow(() -> new PurchaseOrderNotFoundException("purchase order not found id : " + id));
-      purchaseOrder.setStatus(POStatus.APPROVED);
+       PurchaseOrder purchaseOrder =  this.purchaseOrderRepository.findById(id).orElseThrow(() -> new PurchaseOrderNotFoundException("PurchaseOrder Not Found id :" + id));
 
-      List<PurchaseOrderLine> purchaseOrderLines = purchaseOrder.getLines();
+       List<PurchaseOrderLine> purchaseOrderLines = purchaseOrder.getLines();
 
-      for(PurchaseOrderLine purchasesLine : purchaseOrderLines)
-      {
-              InventoryDTO inventoryDTO = InventoryDTO.builder().productId(purchasesLine.getProduct().getId()).WarehouseId(warehouseId).quantityReserved(Math.toIntExact(purchasesLine.getQuantity())).build();
-              InventoryMovementDTO inventoryMovementDTO = InventoryMovementDTO.builder().movementDate(LocalDateTime.now()).type(INBOUND).warehouseId(warehouseId).productId(purchasesLine.getProduct().getId()).quantity(Math.toIntExact(purchasesLine.getQuantity())).build();
-              this.inventoryService.createInventory(inventoryDTO);
-              this.inventoryMovementService.createInventoryMovement(inventoryMovementDTO);
-      }
+       for(PurchaseOrderLine purchaseOrderLine : purchaseOrderLines)
+       {
+           InventoryDtoResponse inventoryDtoResponse = this.inventoryService.getInventoryByProductId(purchaseOrderLine.getProduct().getId());
+           Integer quantityOnHand = Math.toIntExact(inventoryDtoResponse.getQuantityOnHand() + purchaseOrderLine.getQuantity());
+           Integer QuantityReserved = Math.toIntExact(inventoryDtoResponse.getQuantityReserved() - purchaseOrderLine.getQuantity());
+           this.inventoryService.TransformFromQuantityReservedToQuantityHand(purchaseOrderLine.getProduct().getId(),quantityOnHand,QuantityReserved);
 
-      this.purchaseOrderRepository.save(purchaseOrder);
+       }
+        purchaseOrder.setStatus(POStatus.CANCELED);
+       PurchaseOrder purchaseOrderCreated = this.purchaseOrderRepository.save(purchaseOrder);
+      return this.purchaseOrderMapper.toDtoResponse(purchaseOrderCreated);
 
-    return  this.purchaseOrderMapper.toDtoResponse(purchaseOrder);
+
+
     }
 
     public List<PurchaseOrderDtoResponse> getAllPurchaseOrders()
@@ -124,5 +187,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
        return  purchaseOrderMapper.toDtoResponse(purchaseOrder);
     }
+
+
 
 }

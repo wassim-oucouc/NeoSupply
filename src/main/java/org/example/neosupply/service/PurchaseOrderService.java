@@ -14,4 +14,5 @@ public interface PurchaseOrderService {
     public List<PurchaseOrderDtoResponse> getAllPurchaseOrders();
     public PurchaseOrderDtoResponse findPurchaseOrderById(Long id);
     public PurchaseOrderDtoResponse approvePurchaseOrder(Long id,Long warehouseId);
+    public PurchaseOrderDtoResponse cancelPurchaseOrder(Long id);
 }

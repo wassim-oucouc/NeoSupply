@@ -6,6 +6,7 @@ import org.example.neosupply.dto.response.InventoryDtoResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface InventoryService {
@@ -13,6 +14,7 @@ public interface InventoryService {
     public InventoryDtoResponse createInventory(InventoryDTO inventoryDTO);
 
     public InventoryDtoResponse updateInventoryById(InventoryDTO inventoryDTO, Long id);
+    InventoryDtoResponse updateInventory(InventoryDTO inventoryDTO);
 
     public void deleteInventoryById(Long id);
 
@@ -21,7 +23,8 @@ public interface InventoryService {
     public List<InventoryDtoResponse> getAllProducts();
 
     public Integer getProductQuantityByWarehouse(Long productId,Long warehouseId);
-    public List<InventoryDtoResponse> getInventoriesByProductId(Long productId);
-    public InventoryDtoResponse findInventoryByProductIdAndWarehouseId(Long warehouseId,Long productId);
+    public InventoryDtoResponse getInventoryByProductId(Long productId);
+    public Optional<InventoryDtoResponse> findInventoryByProductIdAndWarehouseId(Long warehouseId, Long productId);
+    public void TransformFromQuantityReservedToQuantityHand(Long productId,Integer QuantityOnHand,Integer QuantityReserved);
 
 }

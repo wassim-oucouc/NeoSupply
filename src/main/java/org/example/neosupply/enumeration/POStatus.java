@@ -5,5 +5,6 @@ public enum POStatus {
     DRAFT,
     APPROVED,
     RECEIVED,
-    CANCELED
+    CANCELED,
+    REJECTED
 }

@@ -7,6 +7,7 @@ import org.example.neosupply.entity.Warehouse;
 import org.example.neosupply.enumeration.SOStatus;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 public class SalesOrderDTO {
@@ -17,5 +18,7 @@ public class SalesOrderDTO {
 
     private Long clientId;
     private Long warehouseId;
+
+    private List<SalesOrderLineDTO> salesOrderLineDTOS;
 
 }
