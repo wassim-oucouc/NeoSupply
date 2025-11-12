@@ -9,5 +9,6 @@ import org.springframework.stereotype.Service;
 public interface SalesOrderService {
 
     public SalesOrderDtoResponse createSalesOrder(SalesOrderDTO salesOrderDTO);
+    public SalesOrderDtoResponse approveSalesOrder(Long salesOrderId, Long carrierId);
 
-}
+    }

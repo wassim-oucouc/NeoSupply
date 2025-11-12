@@ -1,34 +1,35 @@
 package org.example.neosupply.controller;
 
-
 import org.example.neosupply.dto.request.SalesOrderDTO;
 import org.example.neosupply.dto.response.SalesOrderDtoResponse;
 import org.example.neosupply.service.SalesOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
+@RequestMapping("/api/sales-orders")
 public class SalesOrderController {
 
-    private SalesOrderService salesOrderService;
+    private final SalesOrderService salesOrderService;
 
-    @Autowired
-    public SalesOrderController(SalesOrderService salesOrderService)
-    {
+    public SalesOrderController(SalesOrderService salesOrderService) {
         this.salesOrderService = salesOrderService;
     }
 
-    @PostMapping("/salesorder/create")
-    public ResponseEntity<SalesOrderDtoResponse> createSalesOrder(@RequestBody  SalesOrderDTO salesOrderDTO)
-    {
-        return ResponseEntity.ok().body(this.salesOrderService.createSalesOrder(salesOrderDTO));
+    @PostMapping
+    public ResponseEntity<SalesOrderDtoResponse> createSalesOrder(@RequestBody SalesOrderDTO salesOrderDTO) {
+        SalesOrderDtoResponse created = salesOrderService.createSalesOrder(salesOrderDTO);
+        return ResponseEntity.ok(created);
     }
 
-    @PutMapping("/salesorder/")
-
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<SalesOrderDtoResponse> approveSalesOrder(
+            @PathVariable Long id,
+            @RequestParam Long carrierId) {
+        SalesOrderDtoResponse approved = salesOrderService.approveSalesOrder(id, carrierId);
+        return ResponseEntity.ok(approved);
+    }
 
 }

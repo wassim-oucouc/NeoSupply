@@ -108,6 +108,15 @@ public class InventoryServiceImpl implements InventoryService {
         this.inventoryRepository.updateQuantityOnHandAndQuantityReservedOrderByProduct_Id(QuantityOnHand,QuantityReserved,productId);
     }
 
+    public Optional<Inventory> checkProductQuantityReservedByProductId(Long productId)
+    {
+        return this.inventoryRepository.findInventoryByProduct_Id(productId);
+
+
+
+
+    }
+
 
 
 

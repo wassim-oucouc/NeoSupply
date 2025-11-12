@@ -18,5 +18,5 @@ public class ShipmentDtoResponse {
     private Instant shippedAt;
     private Instant deliveredAt;
 
-    private Carrier carrierId;
+    private CarrierDtoResponse carrierDtoResponse;
 }

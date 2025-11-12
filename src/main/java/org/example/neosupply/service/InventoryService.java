@@ -3,6 +3,7 @@ package org.example.neosupply.service;
 
 import org.example.neosupply.dto.request.InventoryDTO;
 import org.example.neosupply.dto.response.InventoryDtoResponse;
+import org.example.neosupply.entity.Inventory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,5 +27,6 @@ public interface InventoryService {
     public InventoryDtoResponse getInventoryByProductId(Long productId);
     public Optional<InventoryDtoResponse> findInventoryByProductIdAndWarehouseId(Long warehouseId, Long productId);
     public void TransformFromQuantityReservedToQuantityHand(Long productId,Integer QuantityOnHand,Integer QuantityReserved);
+    public Optional<Inventory> checkProductQuantityReservedByProductId(Long productId);
 
 }
