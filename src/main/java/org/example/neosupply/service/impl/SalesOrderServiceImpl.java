@@ -117,8 +117,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         salesOrder.getSalesOrderLines().forEach(line -> {
             ShipmentDTO shipmentDTO = ShipmentDTO.builder()
                     .shipmentStatus(ShipmentStatus.PLANNED)
-                    .trackingNumber("TRK-" + UUID.randomUUID().toString().substring(0, 8)) // génération automatique
-                    .carrierId(carrierId)
+                    .trackingNumber("TRK-" + UUID.randomUUID().toString().substring(0, 8))
                     .build();
 
             shipmentService.createShipment(shipmentDTO);
