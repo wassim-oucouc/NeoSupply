@@ -179,6 +179,22 @@
                                     </limits>
                                 </rule>
                             </rules>
+                            <excludes>
+                                <!-- Ignore DTOs -->
+                                <exclude>**/dto/**</exclude>
+
+                                <!-- Ignore Entities -->
+                                <exclude>**/entity/**</exclude>
+
+                                <!-- Ignore Mapper classes -->
+                                <exclude>**/mapper/**</exclude>
+
+                                <!-- Ignore configuration classes (optional) -->
+                                <exclude>**/config/**</exclude>
+
+                                <!-- Ignore SmartLogiApplication (optional) -->
+                                <exclude>**/*Application*.class</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
