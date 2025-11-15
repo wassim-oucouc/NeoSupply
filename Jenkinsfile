@@ -2,35 +2,45 @@ pipeline {
     agent any
 
     tools {
-        // Utilise le Maven Wrapper
+        // Specify JDK and Maven installations configured in Jenkins
         jdk 'jdk_17'
         maven 'maven 3.9.11'
     }
 
     environment {
-        // Mettre le chemin si nécessaire, sinon Jenkins utilisera ./mvnw
+        // Path to Maven Wrapper
         MVNW = './mvnw'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-            echo 'checkout'
-            checkout scm
-              //  git branch: 'main', url: 'https://github.com/wassim-oucouc/NeoSupply.git'
+                echo 'Checking out source code...'
+                // Use existing SCM configuration, so old commits remain
+                checkout scm
+                // If needed, you could also use explicit Git URL + branch
+                // git branch: 'main', url: 'https://github.com/wassim-oucouc/NeoSupply.git', credentialsId: 'github-pat-neo'
             }
         }
 
         stage('Build & Test') {
             steps {
-             sh 'chmod +x ./mvnw'
+                echo 'Making Maven Wrapper executable...'
+                sh 'chmod +x ./mvnw'
+
+                echo 'Running Maven build and tests...'
                 sh "${MVNW} clean verify"
             }
             post {
                 always {
-                    // Archive les rapports JUnit et JaCoCo
+                    echo 'Archiving test and coverage reports...'
+                    // Archive JUnit test reports
                     junit '**/target/surefire-reports/*.xml'
-                    jacoco execPattern: '**/target/jacoco.exec', classPattern: '**/target/classes', sourcePattern: '**/src/main/java'
+                    // Archive JaCoCo coverage reports
+                    jacoco execPattern: '**/target/jacoco.exec',
+                           classPattern: '**/target/classes',
+                           sourcePattern: '**/src/main/java'
                 }
             }
         }
@@ -38,11 +48,13 @@ pipeline {
 
     post {
         success {
-            echo 'Build et tests réussis ✅'
+            echo 'Build and tests succeeded ✅'
         }
         failure {
-            echo 'Le build a échoué ❌'
-
+            echo 'Build failed ❌'
+        }
+        cleanup {
+            echo 'Cleaning up workspace...'
         }
     }
 }
