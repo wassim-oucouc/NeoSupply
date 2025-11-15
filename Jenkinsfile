@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Utilise le Maven Wrapper
-        jdk 'jdk_17 '
+        jdk 'jdk_17'
         maven 'maven 3.9.11'
     }
 
