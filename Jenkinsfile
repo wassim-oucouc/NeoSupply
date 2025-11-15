@@ -30,7 +30,7 @@ pipeline {
                 sh 'chmod +x ./mvnw'
 
                 echo 'Running Maven build and tests...'
-                sh "${MVNW} clean verify"
+                sh "${MVNW} clean verify -Dspring.profiles.active=test"
             }
             post {
                 always {
