@@ -10,10 +10,6 @@ pipeline {
     environment {
         // Mettre le chemin si nécessaire, sinon Jenkins utilisera ./mvnw
         MVNW = './mvnw'
-
-
-
-
     }
 
     stages {
