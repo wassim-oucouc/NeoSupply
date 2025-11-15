@@ -15,7 +15,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/ton-utilisateur/NeoSupply.git'
+            echo 'checkout'
+            checkout scm
+              //  git branch: 'main', url: 'https://github.com/wassim-oucouc/NeoSupply.git'
             }
         }
 
