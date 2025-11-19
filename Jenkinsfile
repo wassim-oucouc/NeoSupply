@@ -28,11 +28,8 @@ pipeline {
             steps {
                 script {
                     echo 'Making Maven Wrapper executable...'
-                    sh 'ls -la'
-                    sh 'chmod 755 mvnw'
-
-                    echo 'Running Maven build and tests...'
-                    sh "${MVNW} clean verify -Dspring.profiles.active=test"
+            sh 'chmod 755 ./mvnw'
+            sh "./mvnw clean verify -Dspring.profiles.active=test -X"
                 }
             }
             post {
