@@ -49,7 +49,7 @@ pipeline {
         {
         steps
         {
-           withSonarQubeEnv('SonarQube') {
+           withSonarQubeEnv('SonarQubeServer') {
                  sh '''
                                    mvn sonar:sonar \
                                    -Dsonar.projectKey=NeoSupply \
