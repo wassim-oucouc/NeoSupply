@@ -12,6 +12,8 @@ pipeline {
         MVNW = './mvnw'
         // Explicitly set test profile
         SPRING_PROFILES_ACTIVE = 'test'
+
+
     }
 
     stages {
@@ -26,7 +28,8 @@ pipeline {
             steps {
                 script {
                     echo 'Making Maven Wrapper executable...'
-                    sh 'chmod +x ./mvnw'
+                    sh 'ls -la'
+                    sh 'chmod 755 mvnw'
 
                     echo 'Running Maven build and tests...'
                     sh "${MVNW} clean verify -Dspring.profiles.active=test"
@@ -36,9 +39,7 @@ pipeline {
                 always {
                     echo 'Archiving test and coverage reports...'
 
-                    // Archive JUnit test reports
-                    junit allowEmptyResults: true,
-                          testResults: '**/target/surefire-reports/*.xml'
+
 
                     // Archive JaCoCo coverage reports (only if plugin is installed)
                     script {
@@ -60,6 +61,7 @@ pipeline {
                         reportDir: 'target/site/jacoco',
                         reportFiles: 'index.html',
                         reportName: 'JaCoCo Coverage Report'
+
                     ])
                 }
             }
