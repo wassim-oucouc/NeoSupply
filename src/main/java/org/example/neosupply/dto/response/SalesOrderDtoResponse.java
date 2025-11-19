@@ -1,6 +1,7 @@
 package org.example.neosupply.dto.response;
 
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Data;
 import org.example.neosupply.entity.Clients;
 import org.example.neosupply.entity.Warehouse;
@@ -10,6 +11,7 @@ import java.time.Instant;
 
 
 @Data
+@Builder
 public class SalesOrderDtoResponse {
 
     private Long id;

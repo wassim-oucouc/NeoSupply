@@ -2,18 +2,13 @@ pipeline {
     agent any
 
     tools {
-        // Specify JDK and Maven installations configured in Jenkins
         jdk 'jdk_17'
         maven 'maven 3.9.11'
     }
 
     environment {
-        // Path to Maven Wrapper
         MVNW = './mvnw'
-        // Explicitly set test profile
         SPRING_PROFILES_ACTIVE = 'test'
-
-
     }
 
     stages {
@@ -35,10 +30,6 @@ pipeline {
             post {
                 always {
                     echo 'Archiving test and coverage reports...'
-
-
-
-                    // Archive JaCoCo coverage reports (only if plugin is installed)
                     script {
                         try {
                             jacoco execPattern: '**/target/jacoco.exec',
@@ -54,6 +45,27 @@ pipeline {
                 }
             }
         }
+        stage('sonarQube')
+        {
+        steps
+        {
+           withSonarQubeEnv('SonarQube') {
+                 sh '''
+                                   mvn sonar:sonar \
+                                   -Dsonar.projectKey=NeoSupply \
+                                   -Dsonar.projectName=NeoSupply \
+                                   -Dsonar.java.coveragePlugin=jacoco \
+                                   -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                                   -Dsonar.junit.reportPaths=target/surefire-reports \
+                                   -Dsonar.sources=src/main/java \
+                                   -Dsonar.tests=src/test/java \
+                                   -Dsonar.java.binaries=target/classes \
+                                   -Dsonar.java.test.binaries=target/test-classes
+                               '''
+                               }
+                            }
+                               }
+
 
         stage('Code Quality Check') {
             steps {
@@ -74,25 +86,17 @@ pipeline {
     post {
         success {
             echo '✅ Build and tests succeeded!'
-            // Optional: Send notification
-            // emailext subject: "Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            //          body: "Build successful!",
-            //          to: "team@example.com"
         }
         failure {
             echo '❌ Build failed!'
-            // Optional: Send notification
-            // emailext subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-            //          body: "Build failed. Check console output.",
-            //          to: "team@example.com"
+
         }
         unstable {
             echo '⚠️ Build unstable (tests passed but quality gates failed)'
         }
         cleanup {
             echo 'Cleaning up workspace...'
-            // Optional: Clean workspace after build
-            // cleanWs()
+
         }
     }
 }

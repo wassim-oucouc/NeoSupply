@@ -1,9 +1,11 @@
 package org.example.neosupply.dto.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 
 @Data
+
 public class InventoryDtoResponse {
 
     private Long id;

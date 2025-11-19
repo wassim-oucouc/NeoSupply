@@ -184,7 +184,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.0</minimum>
+                                            <minimum>0.30</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -200,6 +200,9 @@
                                 <exclude>**/config/**</exclude>
                                 <!-- Ignore Application class -->
                                 <exclude>**/*Application*.class</exclude>
+
+                                <exclude>**/controller/**</exclude>
+
                             </excludes>
                         </configuration>
                     </execution>

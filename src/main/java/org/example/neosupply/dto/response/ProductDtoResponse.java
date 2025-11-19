@@ -1,11 +1,13 @@
 package org.example.neosupply.dto.response;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+
 public class ProductDtoResponse {
 
     private Long id;
