@@ -50,16 +50,7 @@ pipeline {
                         }
                     }
 
-                    // Optional: Publish HTML reports
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'JaCoCo Coverage Report'
 
-                    ])
                 }
             }
         }
