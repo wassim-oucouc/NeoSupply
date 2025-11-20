@@ -64,6 +64,7 @@ pipeline {
                                    -Dsonar.java.test.binaries=target/test-classes
                                '''
                                }
+                               }
                             }
                                }
 
