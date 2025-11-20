@@ -35,9 +35,7 @@ public class WarehouseServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    //========================
-    // Test createWarehouse
-    //========================
+
     @Test
     void testCreateWarehouse_success() {
         WarehouseDTO dto = new WarehouseDTO();
@@ -57,9 +55,7 @@ public class WarehouseServiceImplTest {
         assertEquals(response, result);
     }
 
-    //========================
-    // Test updateWarehouseById
-    //========================
+
     @Test
     void testUpdateWarehouseById_success() {
         Long id = 1L;
@@ -95,9 +91,7 @@ public class WarehouseServiceImplTest {
                 () -> warehouseService.updateWarehouseById(id, dto));
     }
 
-    //========================
-    // Test deleteWarehouseById
-    //========================
+
     @Test
     void testDeleteWarehouseById_success() {
         Long id = 1L;
@@ -117,9 +111,6 @@ public class WarehouseServiceImplTest {
                 () -> warehouseService.deleteWarheouseById(id));
     }
 
-    //========================
-    // Test findWarehouseById
-    //========================
     @Test
     void testFindWarehouseById_success() {
         Long id = 1L;
@@ -143,9 +134,7 @@ public class WarehouseServiceImplTest {
                 () -> warehouseService.findWarehouseById(id));
     }
 
-    //========================
-    // Test getAllWarehouses
-    //========================
+
     @Test
     void testGetAllWarehouses_success() {
         Warehouse entity1 = new Warehouse();

@@ -41,7 +41,6 @@ class CarrierServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Initialisation des objets avec Builder
         carrierDTO = CarrierDTO.builder()
                 .id(1L)
                 .name("Carrier 1")
@@ -120,14 +119,11 @@ class CarrierServiceImplTest {
 
     @Test
     void testDeactivateCarrier() {
-        // Simuler la récupération
         when(carrierRepository.findById(1L)).thenReturn(Optional.of(carrier));
 
-        // Simuler le save en mettant active à false
         carrier.setActive(false);
         when(carrierRepository.save(carrier)).thenReturn(carrier);
 
-        // Le DTO retourné doit avoir active = false
         CarrierDtoResponse deactivatedDto = CarrierDtoResponse.builder()
                 .id(1L)
                 .name("Carrier 1")

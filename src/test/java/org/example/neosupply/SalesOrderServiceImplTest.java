@@ -62,19 +62,16 @@ class SalesOrderServiceImplTest {
 
     @Test
     void testCreateSalesOrder() {
-        // --- DTO de ligne de commande
         SalesOrderLineDTO lineDTO = SalesOrderLineDTO.builder()
                 .productId(1L)
                 .quantity(5)
                 .build();
 
-        // --- DTO de commande
         SalesOrderDTO dto = SalesOrderDTO.builder()
                 .warehouseId(1L)
                 .salesOrderLineDTOS(List.of(lineDTO))
                 .build();
 
-        // --- Entités
         Product product = new Product();
         product.setId(1L);
 
@@ -91,7 +88,6 @@ class SalesOrderServiceImplTest {
 
         SalesOrder savedOrder = new SalesOrder();
 
-        // --- DTO réponses
         ProductDtoResponse productDtoResponse = new ProductDtoResponse();
         productDtoResponse.setId(1L);
         productDtoResponse.setName("Produit Test");
@@ -117,7 +113,6 @@ class SalesOrderServiceImplTest {
         movementResponse.setMovementDate(LocalDateTime.now());
         movementResponse.setType(MovementType.OUTBOUND);
 
-        // --- Mocks
         when(salesOrderMapper.toEntity(dto)).thenReturn(orderEntity);
         when(inventoryService.getProductQuantityByWarehouse(1L, 1L)).thenReturn(0); // déclenche la logique OUTBOUND
         when(inventoryService.findInventoryByProductIdAndWarehouseId(1L, 1L))
@@ -126,14 +121,11 @@ class SalesOrderServiceImplTest {
         when(salesOrderRepository.save(orderEntity)).thenReturn(savedOrder);
         when(salesOrderMapper.toDtoResponse(savedOrder)).thenReturn(response);
 
-        // Remplacer doNothing() par thenReturn(...) car la méthode retourne InventoryMovementDtoResponse
         when(inventoryMovementService.createInventoryMovement(any(InventoryMovementDTO.class)))
                 .thenReturn(movementResponse);
 
-        // --- Call
         SalesOrderDtoResponse result = salesOrderService.createSalesOrder(dto);
 
-        // --- Vérifications
         verify(inventoryMovementService, times(1))
                 .createInventoryMovement(any(InventoryMovementDTO.class));
         verify(salesOrderRepository).save(orderEntity);

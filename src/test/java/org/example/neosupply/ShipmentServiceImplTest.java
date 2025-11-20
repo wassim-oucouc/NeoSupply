@@ -37,7 +37,6 @@ class ShipmentServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // 🔹 Test : Création d'un shipment
     @Test
     void testCreateShipment() {
         ShipmentDTO dto = ShipmentDTO.builder()

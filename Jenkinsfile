@@ -77,8 +77,7 @@ pipeline {
                         sh "${MVNW} jacoco:check -Dspring.profiles.active=test"
                     } catch (Exception e) {
                         echo "Code coverage check failed or skipped: ${e.message}"
-                        // Don't fail the build for coverage checks (optional)
-                        // unstable(message: "Code coverage below threshold")
+
                     }
                 }
             }

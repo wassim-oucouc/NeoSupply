@@ -58,7 +58,6 @@ class PurchaseOrderServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Créer un Product entity
         Product product = new Product();
         product.setId(1L);
         product.setName("Test Product");
@@ -66,13 +65,11 @@ class PurchaseOrderServiceImplTest {
         product.setPrice(100.0);
         product.setActive(true);
 
-        // Créer PurchaseOrderLine entity
         line = new PurchaseOrderLine();
         line.setId(1L);
         line.setProduct(product);
         line.setQuantity(10L);
 
-        // Préparer une réponse DTO fictive
         purchaseOrderDtoResponse = new PurchaseOrderDtoResponse();
         purchaseOrderDtoResponse.setId(1L);
     }
