@@ -17,6 +17,8 @@ services:
       - ./src:/var/jenkins_home/workspace/src
     networks:
       - jenkins-net
+    depends_on:
+      - sonarqube
 
   sonarqube:
     image: sonarqube:community
@@ -31,6 +33,7 @@ services:
       - sonarqube_logs:/opt/sonarqube/logs
     networks:
       - jenkins-net
+
 
 volumes:
   jenkins_Data:

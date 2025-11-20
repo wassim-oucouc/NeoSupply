@@ -49,6 +49,7 @@ pipeline {
         {
         steps
         {
+          withCredentials([string(credentialsId: 'sonarToken', variable: 'sonarToken')]) {
            withSonarQubeEnv('SonarQubeServer') {
                  sh '''
                                    mvn sonar:sonar \
