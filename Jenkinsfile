@@ -86,14 +86,15 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build and tests succeeded!'
+            echo ' Build and tests succeeded!'
         }
         failure {
-            echo '❌ Build failed!'
+            echo ' Build failed!'
 
         }
         unstable {
-            echo '⚠️ Build unstable (tests passed but quality gates failed)'
+            echo '   Build unstable (tests passed but quality gates failed)'
+
         }
         cleanup {
             echo 'Cleaning up workspace...'
