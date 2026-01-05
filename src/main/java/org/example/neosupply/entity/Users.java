@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.neosupply.enumeration.Role;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,7 +23,9 @@ public class Users {
     private String nom;
     private String email;
     private String password;
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
     private Boolean active;
 
 }

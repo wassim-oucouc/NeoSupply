@@ -11,7 +11,10 @@ import org.example.neosupply.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -44,7 +47,9 @@ public class UserServiceImpl implements UserService {
         users.setEmail(usersDTO.getEmail());
         users.setPassword(passwordEncode);
         users.setActive(true);
-        users.setRole(Role.valueOf(usersDTO.getRole().name()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(usersDTO.getRole());
+        users.setRoles(roles);
 
         this.userRepository.save(users);
 
@@ -78,7 +83,10 @@ public class UserServiceImpl implements UserService {
         }
         return true;
 
+    }
 
-
+    public Users findUserById(Long id)
+    {
+        return this.userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User Not Found id " + id));
     }
 }

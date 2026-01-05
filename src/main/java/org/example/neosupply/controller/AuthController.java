@@ -1,11 +1,16 @@
 package org.example.neosupply.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.example.neosupply.Security.JwtUtil;
 import org.example.neosupply.dto.request.UsersDTO;
 import org.example.neosupply.dto.response.UserDtoResponse;
+import org.example.neosupply.entity.RefreshToken;
+import org.example.neosupply.service.RefreshTokenService;
 import org.example.neosupply.service.UserService;
+import org.example.neosupply.service.impl.CustomUserDetailsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +23,16 @@ public class AuthController {
 
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+    private final CustomUserDetailsService customUserDetailsService;
 
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, CustomUserDetailsService customUserDetailsService) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @PostMapping("/user/register")
@@ -32,8 +43,27 @@ public class AuthController {
         return ResponseEntity.ok().body(userDtoResponse);
     }
 
+    @PostMapping("/user/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
+
+        String refreshToken = body.get("refreshToken");
+
+        RefreshToken token =
+                refreshTokenService.verify(refreshToken);
+
+        UserDetails userDetails =
+                customUserDetailsService.loadUserByUsername(token.getEmail());
+
+        String newAccessToken =
+                jwtUtil.generateToken(userDetails.getUsername());
+
+        return ResponseEntity.ok(Map.of(
+                "accessToken", newAccessToken
+        ));
+    }
+
     @PostMapping("/user/login")
-    public ResponseEntity<?> loginUser(@RequestBody UsersDTO usersDTO, HttpSession httpSession)
+    public ResponseEntity<?> loginUser(@RequestBody UsersDTO usersDTO)
     {
         String email = usersDTO.getEmail();
         String password = usersDTO.getPassword();
@@ -45,14 +75,10 @@ public class AuthController {
        }
 
        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
-        httpSession.setAttribute("user",userDtoResponse);
-        return ResponseEntity.ok().body(httpSession.getId());
-    }
+       String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
+        RefreshToken refreshToken =
+                refreshTokenService.create(usersDTO.getEmail());
 
-
-    @PostMapping("/test/session")
-    public Object getSession(@RequestBody Map<String,String> session,HttpSession httpSession)
-    {
-        return httpSession.getAttribute("user");
+        return ResponseEntity.ok().body(Map.of("accessToken",jwtToken,"refreshToken",refreshToken.getToken()));
     }
 }

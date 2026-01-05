@@ -8,6 +8,7 @@ import org.example.neosupply.service.InventoryService;
 import org.example.neosupply.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -34,12 +35,14 @@ public class ProductController {
     }
 
     @GetMapping("/product/details/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<ProductDtoResponse> getProductById(@PathVariable("id") Long id)
     {
         return ResponseEntity.ok().body(this.productService.findProductById(id));
     }
 
     @DeleteMapping("/product/delete/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<?> deleteProductById(@PathVariable("id") Long id)
     {
         this.productService.deleteProductById(id);
@@ -47,6 +50,7 @@ public class ProductController {
     }
 
     @PutMapping("/product/update/{id}")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<ProductDtoResponse> updateProductById(@PathVariable("id") Long id,@RequestBody ProductDTO productDTO)
     {
         return ResponseEntity.ok().body(this.productService.updateProductById(productDTO,id));
@@ -54,6 +58,7 @@ public class ProductController {
 
 
     @PatchMapping("/api/products/{sku}/desactive")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<Product> desactiveProductBySku(@PathVariable("sku") String sku)
     {
         return ResponseEntity.ok().body(this.productService.deactivateProduct(sku));

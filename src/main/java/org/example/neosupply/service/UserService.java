@@ -17,5 +17,6 @@ public interface UserService {
     public UserDtoResponse registerUser(UsersDTO usersDTO);
     public UserDtoResponse getUserByEmail(String email);
     public Boolean checkEmailAndPassword(String email,String password);
+    public Users findUserById(Long id);
 
 }
