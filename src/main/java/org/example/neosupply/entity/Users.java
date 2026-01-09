@@ -25,7 +25,7 @@ public class Users {
     private String password;
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
     private Boolean active;
 
 }

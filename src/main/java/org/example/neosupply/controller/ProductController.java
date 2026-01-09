@@ -27,6 +27,7 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDtoResponse> createProduct(@RequestBody ProductDTO productDTO)
     {
         ProductDtoResponse productDtoResponse =  this.productService.createProduct(productDTO);
@@ -35,14 +36,14 @@ public class ProductController {
     }
 
     @GetMapping("/product/details/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDtoResponse> getProductById(@PathVariable("id") Long id)
     {
         return ResponseEntity.ok().body(this.productService.findProductById(id));
     }
 
     @DeleteMapping("/product/delete/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteProductById(@PathVariable("id") Long id)
     {
         this.productService.deleteProductById(id);
@@ -50,7 +51,7 @@ public class ProductController {
     }
 
     @PutMapping("/product/update/{id}")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDtoResponse> updateProductById(@PathVariable("id") Long id,@RequestBody ProductDTO productDTO)
     {
         return ResponseEntity.ok().body(this.productService.updateProductById(productDTO,id));
@@ -58,7 +59,7 @@ public class ProductController {
 
 
     @PatchMapping("/api/products/{sku}/desactive")
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> desactiveProductBySku(@PathVariable("sku") String sku)
     {
         return ResponseEntity.ok().body(this.productService.deactivateProduct(sku));

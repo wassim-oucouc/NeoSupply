@@ -58,7 +58,7 @@ class UserServiceImplTest {
         user.setNom("Doe");
         user.setEmail("john.doe@example.com");
         user.setPassword("encodedPassword");
-        user.setRole(Role.Client);
+        user.setRole(Role.ROLE_CLIENT);
         user.setActive(true);
 
         userDtoResponse = new UserDtoResponse();

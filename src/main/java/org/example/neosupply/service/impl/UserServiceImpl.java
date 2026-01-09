@@ -47,10 +47,12 @@ public class UserServiceImpl implements UserService {
         users.setEmail(usersDTO.getEmail());
         users.setPassword(passwordEncode);
         users.setActive(true);
-        Set<Role> roles = new HashSet<>();
-        roles.add(usersDTO.getRole());
-        users.setRoles(roles);
 
+        if (usersDTO.getRoles() == null || usersDTO.getRoles().isEmpty()) {
+            users.setRoles(Set.of(Role.ROLE_CLIENT));
+        } else {
+            users.setRoles(usersDTO.getRoles());
+        }
         this.userRepository.save(users);
 
         return this.userMapper.toDtoResponse(users);

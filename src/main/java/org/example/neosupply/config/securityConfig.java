@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.net.http.HttpRequest;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,6 +48,11 @@ public class  securityConfig{
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    public void crossOrigin(HttpRequest httpRequest)
+    {
+        httpRequest.
     }
     @Bean
     public PasswordEncoder passwordEncoder()
