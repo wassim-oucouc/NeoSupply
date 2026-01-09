@@ -6,11 +6,13 @@ import org.example.neosupply.dto.request.SupplierDTO;
 import org.example.neosupply.dto.response.SupplierDtoResponse;
 import org.example.neosupply.service.SupplierService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/suppliers")
 public class SupplierController {
 
     public SupplierService supplierService;
@@ -20,33 +22,36 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    @GetMapping("/supplier/all")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @GetMapping
     public ResponseEntity<List<SupplierDtoResponse>> getAllSuppliers()
     {
         return ResponseEntity.ok().body(this.supplierService.getAllSuppliers());
     }
 
-    @GetMapping("/supplier/details/{id}")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @GetMapping("/{id}")
     public ResponseEntity<SupplierDtoResponse> getSupplierById(@PathVariable("id") Long id)
     {
         return ResponseEntity.ok().body(this.supplierService.findSupplierById(id));
     }
 
 
-    @DeleteMapping("/supplier/delete/{id}")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSupplierById(@PathVariable("id") Long id)
     {
         this.supplierService.deleteSupplierById(id);
         return ResponseEntity.ok().body("supplier is deleted");
     }
-
-    @PutMapping("/supplier/update/{id}")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @PutMapping("/{id}")
     public ResponseEntity<SupplierDtoResponse> updateSupplierById(@PathVariable("id") Long id, @RequestBody SupplierDTO supplierDTO)
     {
        return ResponseEntity.ok().body(this.supplierService.updateSupplier(id,supplierDTO));
     }
-
-    @PostMapping("/supplier/add")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @PostMapping
     public ResponseEntity<SupplierDtoResponse> createSupplier(@RequestBody SupplierDTO supplierDTO)
     {
         return ResponseEntity.ok().body(this.supplierService.createSupplier(supplierDTO));

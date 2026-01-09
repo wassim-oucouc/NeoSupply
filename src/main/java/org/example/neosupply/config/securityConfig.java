@@ -41,18 +41,20 @@ public class  securityConfig{
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/user/login",
-                                        "/user/register").permitAll()
+                        auth
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui/index.html",
+                                        "/swagger-ui.html",
+                                        "/webjars/**"
+                                ).permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
                                 .anyRequest().authenticated()
 
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    public void crossOrigin(HttpRequest httpRequest)
-    {
-        httpRequest.
     }
     @Bean
     public PasswordEncoder passwordEncoder()

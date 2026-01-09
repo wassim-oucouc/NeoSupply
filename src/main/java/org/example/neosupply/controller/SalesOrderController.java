@@ -4,6 +4,7 @@ import org.example.neosupply.dto.request.SalesOrderDTO;
 import org.example.neosupply.dto.response.SalesOrderDtoResponse;
 import org.example.neosupply.service.SalesOrderService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +20,15 @@ public class SalesOrderController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<SalesOrderDtoResponse> createSalesOrder(@RequestBody SalesOrderDTO salesOrderDTO) {
         SalesOrderDtoResponse created = salesOrderService.createSalesOrder(salesOrderDTO);
         return ResponseEntity.ok(created);
     }
 
     @PostMapping("/{id}/approve")
+    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
+    @PutMapping("purchaseorder/approve/{purchaseId}/{warehouseId}")
     public ResponseEntity<SalesOrderDtoResponse> approveSalesOrder(
             @PathVariable Long id,
             @RequestParam Long carrierId) {

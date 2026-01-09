@@ -13,12 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
 
 @RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
 
@@ -35,7 +37,7 @@ public class AuthController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public ResponseEntity<UserDtoResponse> registerUser(@RequestBody UsersDTO usersDTO)
     {
         UserDtoResponse userDtoResponse = this.userService.registerUser(usersDTO);
@@ -43,9 +45,7 @@ public class AuthController {
         return ResponseEntity.ok().body(userDtoResponse);
     }
 
-    
-
-    @PostMapping("/user/refresh")
+    @PostMapping("/refreshtoken")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
 
         String refreshToken = body.get("refreshToken");
@@ -64,20 +64,20 @@ public class AuthController {
         ));
     }
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UsersDTO usersDTO)
     {
         String email = usersDTO.getEmail();
         String password = usersDTO.getPassword();
 
-       Boolean check =  this.userService.checkEmailAndPassword(email,password);
-       if(!check)
-       {
-           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid email or password"));
-       }
+        Boolean check =  this.userService.checkEmailAndPassword(email,password);
+        if(!check)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid email or password"));
+        }
 
-       UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
-       String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
+        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
+        String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
         RefreshToken refreshToken =
                 refreshTokenService.create(usersDTO.getEmail());
 
