@@ -237,7 +237,7 @@ Base URL : `/api/sales-orders`
 ## 7. Bonnes pratiques & améliorations
 
 * Ajouter **Refresh Token**
-* Gestion des rôles (ADMIN, USER)
+* Gestion des rôles (ADMIN, WAREHOUSE_MANAGER, CLIENT)
 * OpenAPI / Swagger
 * Centralisation des exceptions
 * Tests unitaires & sécurité
