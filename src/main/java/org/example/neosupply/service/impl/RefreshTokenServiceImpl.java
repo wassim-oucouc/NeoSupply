@@ -15,7 +15,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     private final RefreshTokenRepository repository;
 
-    private final long REFRESH_EXPIRATION = 7 * 24 * 60 * 60; // 7 days
+    private final long REFRESH_EXPIRATION = 7 * 24 * 60 * 60;
 
     public RefreshToken create(String email) {
 
