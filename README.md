@@ -1,139 +1,141 @@
-NeoSupply – Documentation Technique (JWT)
-1. Présentation du projet
+# NeoSupply – Backend Supply Chain
 
-NeoSupply est une application backend développée avec Spring Boot pour la gestion complète d’une chaîne logistique (Supply Chain).
+[![Java](https://img.shields.io/badge/Java-17-blue)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-green)](https://spring.io/projects/spring-boot)
+[![Docker](https://img.shields.io/badge/Docker-20.10-blue)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-Fonctionnalités principales :
+---
 
-Authentification sécurisée via JWT
+## Table des matières
 
-Gestion des utilisateurs
+- [Présentation](#présentation)  
+- [Fonctionnalités](#fonctionnalités)  
+- [Technologies](#technologies)  
+- [Architecture](#architecture)  
+- [Installation & Lancement](#installation--lancement)  
+- [Authentification JWT](#authentification-jwt)  
+- [API Endpoints](#api-endpoints)  
+- [Bonnes pratiques & améliorations](#bonnes-pratiques--améliorations)  
+- [Licence](#licence)  
 
-Gestion des fournisseurs
+---
 
-Gestion des produits et inventaires
+## Présentation
 
-Gestion des entrepôts
+**NeoSupply** est une application backend développée avec **Spring Boot** pour la gestion complète d’une chaîne logistique (Supply Chain).  
+Elle gère les utilisateurs, fournisseurs, produits, entrepôts, transporteurs et commandes d’achat/vente, avec une **authentification sécurisée via JWT**.  
 
-Gestion des transporteurs
+---
 
-Gestion des commandes d’achat et de vente
+## Fonctionnalités
 
-Application conçue pour un déploiement Dockerisé.
+- Authentification sécurisée avec **JWT + Refresh Token**  
+- Gestion des utilisateurs et rôles (ADMIN, WAREHOUSE_MANAGER, CLIENT)  
+- Gestion des fournisseurs et transporteurs  
+- Gestion des produits et inventaires  
+- Gestion des entrepôts  
+- Gestion des commandes d’achat et de vente  
+- Déploiement **Dockerisé**  
 
-2. Architecture
+---
+
+## Technologies
+
+- **Java 17**  
+- **Spring Boot 3.x**  
+- **Spring Security (JWT)**  
+- **Spring Data JPA / Hibernate**  
+- **H2 / MySQL**  
+- **Docker**  
+
+---
+
+## Architecture
 
 Architecture en couches :
 
 Controller → Service → Repository → Database
 
+yaml
+Copier le code
 
-Controller : exposition des API REST
+- **Controller** : expose les APIs REST  
+- **Service** : logique métier  
+- **DTO** : objets de transfert Request / Response  
+- **Entity** : entités JPA persistées  
 
-Service : logique métier
+---
 
-DTO : objets de transfert (Request / Response)
+## Installation & Lancement
 
-Entity : entités JPA persistées
+### Prérequis
 
-3. Authentification & Sécurité (JWT + Refresh Token)
+- Java 17  
+- Maven ou Gradle  
+- Docker (optionnel)  
 
-NeoSupply utilise une authentification stateless basée sur JWT, avec un Refresh Token pour renouveler les accès sans redemander les identifiants.
+### Lancer localement
 
-3.1 Principe JWT + Refresh Token
+```bash
+git clone https://github.com/ton-utilisateur/neosupply.git
+cd neosupply
+./mvnw clean install
+./mvnw spring-boot:run
+L’API sera accessible sur : http://localhost:8080
 
-L’utilisateur se connecte avec email et mot de passe
+Lancer avec Docker
+bash
+Copier le code
+docker build -t neosupply .
+docker run -p 8080:8080 neosupply
+Authentification JWT
+NeoSupply utilise JWT pour sécuriser les endpoints.
 
-Le backend génère :
+Access Token : courte durée, utilisé pour authentifier les requêtes
 
-un Access Token (JWT) de courte durée
+Refresh Token : longue durée, permet de générer un nouvel Access Token
 
-un Refresh Token stocké en base
+Endpoints d’authentification
+Méthode	Endpoint	Description
+POST	/api/auth/register	Créer un nouvel utilisateur
+POST	/api/auth/login	Connexion (retourne access + refresh token)
+POST	/api/auth/refreshtoken	Rafraîchir un token JWT
 
-Le client utilise l’Access Token pour accéder aux APIs protégées
+Exemple login :
 
-À expiration, le client appelle /api/auth/refreshtoken avec le Refresh Token
+bash
+Copier le code
+curl -X POST http://localhost:8080/api/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"user@mail.com","password":"password123"}'
+Réponse :
 
-Le serveur retourne un nouvel Access Token
-
-Authorization: Bearer <ACCESS_TOKEN>
-
-3.2 Endpoints d’authentification
-
-Base URL : /api/auth
-
-➤ Inscription
-
-POST /api/auth/register
-
-Public
-
-Body : UsersDTO
-
-Response : UserDtoResponse
-
-➤ Connexion (Login)
-
-POST /api/auth/login
-
-Public
-
-Body :
-
-{
-  "email": "user@mail.com",
-  "password": "password123"
-}
-
-
-Response :
-
+json
+Copier le code
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "refreshToken": "c9f3b8c1-2d6f-4d2a-a0d9-xxxx"
 }
+API Endpoints
+Tous les endpoints protégés nécessitent un JWT valide
 
-➤ Rafraîchir le token
-
-POST /api/auth/refreshtoken
-
-Public
-
-Body :
-
-{
-  "refreshToken": "c9f3b8c1-2d6f-4d2a-a0d9-xxxx"
-}
-
-
-Response :
-
-{
-  "accessToken": "new.jwt.token.here"
-}
-
-4. APIs protégées (JWT requis)
-
-Toutes les APIs suivantes nécessitent un JWT valide.
-
-4.1 Transporteurs (Carriers)
-
+Transporteurs (Carriers)
 Base URL : /api/carriers
 
 Méthode	Endpoint	Description
 POST	/	Créer un transporteur
 PUT	/{id}	Modifier un transporteur
-GET	/	Liste de tous les transporteurs
+GET	/	Liste des transporteurs
 GET	/{id}	Détails d’un transporteur
 DELETE	/{id}	Supprimer un transporteur
 POST	/{id}/activate	Activer un transporteur
 POST	/{id}/deactivate	Désactiver un transporteur
 POST	/{id}/assign-shipments	Assigner des livraisons
 
-Tous les endpoints sont accessibles uniquement aux WAREHOUSE_MANAGER
+Accès : WAREHOUSE_MANAGER
 
-4.2 Produits
-
+Produits (Products)
 Base URL : /product
 
 Méthode	Endpoint	Description
@@ -143,10 +145,9 @@ PUT	/update/{id}	Modifier un produit
 DELETE	/delete/{id}	Supprimer un produit
 PATCH	/api/products/{sku}/desactive	Désactiver un produit
 
-Seuls les ADMIN peuvent accéder à ces endpoints
+Accès : ADMIN
 
-4.3 Fournisseurs (Suppliers)
-
+Fournisseurs (Suppliers)
 Base URL : /api/suppliers
 
 Méthode	Endpoint	Description
@@ -156,10 +157,9 @@ POST	/	Créer un fournisseur
 PUT	/{id}	Modifier un fournisseur
 DELETE	/{id}	Supprimer un fournisseur
 
-Accès réservé aux WAREHOUSE_MANAGER
+Accès : WAREHOUSE_MANAGER
 
-4.4 Entrepôts (Warehouses)
-
+Entrepôts (Warehouses)
 Base URL : /api/warehouses
 
 Méthode	Endpoint	Description
@@ -169,10 +169,9 @@ PUT	/{id}	Modifier un entrepôt
 DELETE	/{id}	Supprimer un entrepôt
 GET	/	Liste de tous les entrepôts
 
-Accès réservé aux WAREHOUSE_MANAGER
+Accès : WAREHOUSE_MANAGER
 
-4.5 Commandes d’achat (Purchase Orders)
-
+Commandes d’achat (Purchase Orders)
 Base URL : /purchaseorder
 
 Méthode	Endpoint	Description
@@ -180,10 +179,9 @@ POST	/create	Créer une commande d’achat
 PUT	/cancel/{purchaseId}	Annuler une commande
 PUT	/approve/{purchaseId}/{warehouseId}	Approuver une commande
 
-Accès réservé aux WAREHOUSE_MANAGER
+Accès : WAREHOUSE_MANAGER
 
-4.6 Commandes de vente (Sales Orders)
-
+Commandes de vente (Sales Orders)
 Base URL : /api/sales-orders
 
 Méthode	Endpoint	Description
@@ -191,16 +189,4 @@ POST	/	Créer une commande de vente
 POST	/{id}/approve?carrierId=	Approuver une commande avec un transporteur
 GET	/page?size=&page=	Pagination des commandes
 
-Accès réservé aux WAREHOUSE_MANAGER
-
-5. Bonnes pratiques & améliorations
-
-Implémenter gestion complète des rôles : ADMIN, WAREHOUSE_MANAGER, CLIENT
-
-OpenAPI / Swagger pour documentation dynamique
-
-Centralisation des exceptions
-
-Tests unitaires et de sécurité
-
-Gestion avancée du Refresh Token
+Accès : WAREHOUSE_MANAGER
