@@ -1,243 +1,206 @@
-# NeoSupply – Documentation Technique (JWT)
+NeoSupply – Documentation Technique (JWT)
+1. Présentation du projet
 
-## 1. Présentation du projet
-
-**NeoSupply** est une application backend développée avec **Spring Boot** pour la gestion d’une chaîne logistique (Supply Chain).
+NeoSupply est une application backend développée avec Spring Boot pour la gestion complète d’une chaîne logistique (Supply Chain).
 
 Fonctionnalités principales :
 
-* Authentification sécurisée par JWT
-* Gestion des utilisateurs
-* Gestion des fournisseurs
-* Gestion des produits et inventaires
-* Gestion des entrepôts
-* Gestion des transporteurs
-* Gestion des commandes d’achat et de vente
+Authentification sécurisée via JWT
 
-Application conçue pour un déploiement **Dockerisé**.
+Gestion des utilisateurs
 
----
+Gestion des fournisseurs
 
-## 2. Architecture
+Gestion des produits et inventaires
+
+Gestion des entrepôts
+
+Gestion des transporteurs
+
+Gestion des commandes d’achat et de vente
+
+Application conçue pour un déploiement Dockerisé.
+
+2. Architecture
 
 Architecture en couches :
 
-```
 Controller → Service → Repository → Database
-```
 
-* **Controller** : exposition API REST
-* **Service** : logique métier
-* **DTO** : Request / Response
-* **Entity** : JPA
 
----
+Controller : exposition des API REST
 
-## 3. Authentification & Sécurité (JWT + Refresh Token)
+Service : logique métier
 
-NeoSupply utilise une authentification **stateless basée sur JWT** avec un **Refresh Token** pour renouveler les accès sans redemander les identifiants.
+DTO : objets de transfert (Request / Response)
 
----
+Entity : entités JPA persistées
 
-### 3.1 Principe JWT + Refresh Token
+3. Authentification & Sécurité (JWT + Refresh Token)
 
-1. L’utilisateur se connecte avec email et mot de passe
-2. Le backend génère :
+NeoSupply utilise une authentification stateless basée sur JWT, avec un Refresh Token pour renouveler les accès sans redemander les identifiants.
 
-   * un **Access Token (JWT)** de courte durée
-   * un **Refresh Token** stocké en base
-3. Le client utilise l’Access Token pour accéder aux APIs
-4. À expiration, le client appelle `/refreshtoken` avec le Refresh Token
-5. Un nouvel Access Token est généré
+3.1 Principe JWT + Refresh Token
 
-```
+L’utilisateur se connecte avec email et mot de passe
+
+Le backend génère :
+
+un Access Token (JWT) de courte durée
+
+un Refresh Token stocké en base
+
+Le client utilise l’Access Token pour accéder aux APIs protégées
+
+À expiration, le client appelle /api/auth/refreshtoken avec le Refresh Token
+
+Le serveur retourne un nouvel Access Token
+
 Authorization: Bearer <ACCESS_TOKEN>
-```
 
----
+3.2 Endpoints d’authentification
 
-### 3.2 Endpoints d’authentification
+Base URL : /api/auth
 
-Base URL : `/api/auth`
+➤ Inscription
 
-#### ➤ Inscription
+POST /api/auth/register
 
-* **POST** `/api/auth/register`
-* **Public**
+Public
 
----
+Body : UsersDTO
 
-#### ➤ Connexion (Login)
+Response : UserDtoResponse
 
-* **POST** `/api/auth/login`
-* **Public**
+➤ Connexion (Login)
 
-**Body** :
+POST /api/auth/login
 
-```json
+Public
+
+Body :
+
 {
   "email": "user@mail.com",
   "password": "password123"
 }
-```
 
-**Response** :
 
-```json
+Response :
+
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "refreshToken": "c9f3b8c1-2d6f-4d2a-a0d9-xxxx"
 }
-```
 
----
+➤ Rafraîchir le token
 
-#### ➤ Rafraîchir le token
+POST /api/auth/refreshtoken
 
-* **POST** `/api/auth/refreshtoken`
-* **Public**
+Public
 
-**Body** :
+Body :
 
-```json
 {
   "refreshToken": "c9f3b8c1-2d6f-4d2a-a0d9-xxxx"
 }
-```
 
-**Response** :
 
-```json
+Response :
+
 {
   "accessToken": "new.jwt.token.here"
 }
-```
 
----
+4. APIs protégées (JWT requis)
 
-### 3.2 Endpoints d’authentification
+Toutes les APIs suivantes nécessitent un JWT valide.
 
-#### ➤ Inscription
+4.1 Transporteurs (Carriers)
 
-* **POST** `/user/register`
-* **Public**
+Base URL : /api/carriers
 
-**Body** : `UsersDTO`
+Méthode	Endpoint	Description
+POST	/	Créer un transporteur
+PUT	/{id}	Modifier un transporteur
+GET	/	Liste de tous les transporteurs
+GET	/{id}	Détails d’un transporteur
+DELETE	/{id}	Supprimer un transporteur
+POST	/{id}/activate	Activer un transporteur
+POST	/{id}/deactivate	Désactiver un transporteur
+POST	/{id}/assign-shipments	Assigner des livraisons
 
----
+Tous les endpoints sont accessibles uniquement aux WAREHOUSE_MANAGER
 
-#### ➤ Connexion (Login)
+4.2 Produits
 
-* **POST** `/user/login`
-* **Public**
+Base URL : /product
 
-**Body** :
+Méthode	Endpoint	Description
+POST	/create	Créer un produit
+GET	/details/{id}	Détails d’un produit
+PUT	/update/{id}	Modifier un produit
+DELETE	/delete/{id}	Supprimer un produit
+PATCH	/api/products/{sku}/desactive	Désactiver un produit
 
-```json
-{
-  "email": "user@mail.com",
-  "password": "password123"
-}
-```
+Seuls les ADMIN peuvent accéder à ces endpoints
 
-**Response** :
+4.3 Fournisseurs (Suppliers)
 
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "tokenType": "Bearer",
-  "expiresIn": 3600
-}
-```
+Base URL : /api/suppliers
 
----
+Méthode	Endpoint	Description
+GET	/	Liste de tous les fournisseurs
+GET	/{id}	Détails d’un fournisseur
+POST	/	Créer un fournisseur
+PUT	/{id}	Modifier un fournisseur
+DELETE	/{id}	Supprimer un fournisseur
 
-## 4. APIs protégées
+Accès réservé aux WAREHOUSE_MANAGER
 
-Tous les endpoints suivants nécessitent un JWT valide.
+4.4 Entrepôts (Warehouses)
 
-### 4.1 Carriers
+Base URL : /api/warehouses
 
-Base URL : `/api/carriers`
+Méthode	Endpoint	Description
+POST	/	Créer un entrepôt
+GET	/{id}	Détails d’un entrepôt
+PUT	/{id}	Modifier un entrepôt
+DELETE	/{id}	Supprimer un entrepôt
+GET	/	Liste de tous les entrepôts
 
-| Méthode | Endpoint                 | Description           |
-| ------- | ------------------------ | --------------------- |
-| POST    | `/`                      | Créer un transporteur |
-| PUT     | `/{id}`                  | Modifier              |
-| GET     | `/`                      | Liste                 |
-| GET     | `/{id}`                  | Détails               |
-| DELETE  | `/{id}`                  | Supprimer             |
-| POST    | `/{id}/activate`         | Activer               |
-| POST    | `/{id}/deactivate`       | Désactiver            |
-| POST    | `/{id}/assign-shipments` | Assigner livraisons   |
+Accès réservé aux WAREHOUSE_MANAGER
 
----
+4.5 Commandes d’achat (Purchase Orders)
 
-### 4.2 Produits
+Base URL : /purchaseorder
 
-| Méthode | Endpoint                        | Description |
-| ------- | ------------------------------- | ----------- |
-| POST    | `/product/create`               | Créer       |
-| GET     | `/product/details/{id}`         | Détails     |
-| PUT     | `/product/update/{id}`          | Modifier    |
-| DELETE  | `/product/delete/{id}`          | Supprimer   |
-| PATCH   | `/api/products/{sku}/desactive` | Désactiver  |
+Méthode	Endpoint	Description
+POST	/create	Créer une commande d’achat
+PUT	/cancel/{purchaseId}	Annuler une commande
+PUT	/approve/{purchaseId}/{warehouseId}	Approuver une commande
 
----
+Accès réservé aux WAREHOUSE_MANAGER
 
-### 4.3 Suppliers
+4.6 Commandes de vente (Sales Orders)
 
-| Méthode | Endpoint                 |
-| ------- | ------------------------ |
-| GET     | `/supplier/all`          |
-| GET     | `/supplier/details/{id}` |
-| POST    | `/supplier/add`          |
-| PUT     | `/supplier/update/{id}`  |
-| DELETE  | `/supplier/delete/{id}`  |
+Base URL : /api/sales-orders
 
----
+Méthode	Endpoint	Description
+POST	/	Créer une commande de vente
+POST	/{id}/approve?carrierId=	Approuver une commande avec un transporteur
+GET	/page?size=&page=	Pagination des commandes
 
-### 4.4 Warehouses
+Accès réservé aux WAREHOUSE_MANAGER
 
-| Méthode | Endpoint                  |
-| ------- | ------------------------- |
-| POST    | `/warehouse/create`       |
-| GET     | `/warehouse/details/{id}` |
-| PUT     | `/warehouse/update/{id}`  |
-| DELETE  | `/warehouse/delete/{id}`  |
-| GET     | `/warehouse/all`          |
+5. Bonnes pratiques & améliorations
 
----
+Implémenter gestion complète des rôles : ADMIN, WAREHOUSE_MANAGER, CLIENT
 
-### 4.5 Purchase Orders
+OpenAPI / Swagger pour documentation dynamique
 
-| Méthode | Endpoint                                            |
-| ------- | --------------------------------------------------- |
-| POST    | `/purchaseorder/create`                             |
-| PUT     | `/purchaseorder/cancel/{purchaseId}`                |
-| PUT     | `/purchaseorder/approve/{purchaseId}/{warehouseId}` |
+Centralisation des exceptions
 
----
+Tests unitaires et de sécurité
 
-### 4.6 Sales Orders
-
-Base URL : `/api/sales-orders`
-
-| Méthode | Endpoint                   |
-| ------- | -------------------------- |
-| POST    | `/`                        |
-| POST    | `/{id}/approve?carrierId=` |
-
----
-
-
-
-#
-
-## 7. Bonnes pratiques & améliorations
-
-* Ajouter **Refresh Token**
-* Gestion des rôles (ADMIN, WAREHOUSE_MANAGER, CLIENT)
-* OpenAPI / Swagger
-* Centralisation des exceptions
-* Tests unitaires & sécurité
+Gestion avancée du Refresh Token
