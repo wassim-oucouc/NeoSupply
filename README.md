@@ -78,11 +78,11 @@ Copier le code
 ### Lancer localement
 
 ```bash
-git clone https://github.com/ton-utilisateur/neosupply.git
+git clone https://github.com/wassim-oucouc/NeoSupply.git
 cd neosupply
 ./mvnw clean install
 ./mvnw spring-boot:run
-L’API sera accessible sur : http://localhost:8080
+L’API sera accessible sur : http://localhost:8082
 
 Lancer avec Docker
 bash
