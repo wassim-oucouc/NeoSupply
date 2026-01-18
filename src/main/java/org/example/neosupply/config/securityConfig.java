@@ -9,6 +9,11 @@ import org.example.neosupply.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,7 +45,7 @@ public class  securityConfig{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
+                    .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers(
                                         "/v3/api-docs/**",
@@ -49,13 +54,37 @@ public class  securityConfig{
                                         "/swagger-ui.html",
                                         "/webjars/**"
                                 ).permitAll()
+                                .requestMatchers(HttpMethod.GET,"/api/products/**").hasAnyRole("CLIENT","WAREHOUSE_MANAGER","ADMIN")
+                                .requestMatchers("/api/products/**").hasAnyRole("WAREHOUSE_MANAGER","ADMIN")
+                                .requestMatchers("/api/carriers/**").hasAnyRole("WAREHOUSE_MANAGER","ADMIN")
+                                .requestMatchers("/api/purchase-orders").hasAnyRole("WAREHOUSE_MANAGER","ADMIN")
+                                .requestMatchers("/api/sales-orders").hasAnyRole("WAREHOUSE_MANAGER,ADMIN")
+                                .requestMatchers("/api/suppliers").hasAnyRole("ADMIN")
+                                .requestMatchers("/api/warehouses").hasAnyRole("ADMIN")
+
                                 .requestMatchers("/api/auth/**").permitAll()
+
                                 .anyRequest().authenticated()
 
                 )
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return new ProviderManager(authenticationProvider());
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder()
     {

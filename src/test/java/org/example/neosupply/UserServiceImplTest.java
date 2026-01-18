@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +51,7 @@ class UserServiceImplTest {
         usersDTO.setNom("Doe");
         usersDTO.setEmail("john.doe@example.com");
         usersDTO.setPassword("password123");
-        usersDTO.setRole(Role.Client);
+        usersDTO.setRoles(Set.of(Role.ROLE_CLIENT));
 
         user = new Users();
         user.setId(1L);
@@ -58,7 +59,7 @@ class UserServiceImplTest {
         user.setNom("Doe");
         user.setEmail("john.doe@example.com");
         user.setPassword("encodedPassword");
-        user.setRole(Role.Client);
+        usersDTO.setRoles(Set.of(Role.ROLE_CLIENT));
         user.setActive(true);
 
         userDtoResponse = new UserDtoResponse();
@@ -66,7 +67,7 @@ class UserServiceImplTest {
         userDtoResponse.setPrenom("John");
         userDtoResponse.setNom("Doe");
         userDtoResponse.setEmail("john.doe@example.com");
-        userDtoResponse.setRole(Role.Client);
+        usersDTO.setRoles(Set.of(Role.ROLE_CLIENT));
         userDtoResponse.setActive(true);
     }
 

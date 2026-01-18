@@ -30,6 +30,19 @@ services:
       - "9090:80"
     depends_on:
       - db
+  # =======================
+  # Logstash
+  # =======================
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.6.1
+    container_name: logstash
+    restart: always
+    volumes:
+      - ./logstash:/usr/share/logstash/pipeline
+    ports:
+      - "5000:5000"
+    depends_on:
+      - elasticsearch
 
   # =======================
   # Elasticsearch (HTTP, DEV MODE)

@@ -10,6 +10,9 @@ import org.example.neosupply.service.UserService;
 import org.example.neosupply.service.impl.CustomUserDetailsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,13 +31,15 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final CustomUserDetailsService customUserDetailsService;
+    private AuthenticationManager authenticationManager;
 
 
-    public AuthController(UserService userService, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, CustomUserDetailsService customUserDetailsService) {
+    public AuthController(UserService userService, AuthenticationManager authenticationManager,JwtUtil jwtUtil, RefreshTokenService refreshTokenService, CustomUserDetailsService customUserDetailsService) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.customUserDetailsService = customUserDetailsService;
+        this.authenticationManager =   authenticationManager;
     }
 
     @PostMapping("/register")
@@ -47,6 +52,8 @@ public class AuthController {
 
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refresh(@RequestBody Map<String, String> body) {
+
+
 
         String refreshToken = body.get("refreshToken");
 
@@ -70,9 +77,14 @@ public class AuthController {
         String email = usersDTO.getEmail();
         String password = usersDTO.getPassword();
 
-
-        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
-        String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                )
+        );
+       UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
+       String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
         RefreshToken refreshToken =
                 refreshTokenService.create(usersDTO.getEmail());
 

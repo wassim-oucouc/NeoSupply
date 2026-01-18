@@ -3,6 +3,9 @@ package org.example.neosupply.dto.response;
 import lombok.Data;
 import org.example.neosupply.enumeration.Role;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Data
 public class UserDtoResponse {
@@ -11,6 +14,6 @@ public class UserDtoResponse {
     private String prenom;
     private String nom;
     private String email;
-    private Role role;
+    private Set<Role> roles;
     private Boolean active;
 }
