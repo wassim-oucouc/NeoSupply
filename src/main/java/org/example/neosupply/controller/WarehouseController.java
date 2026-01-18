@@ -25,21 +25,18 @@ public class WarehouseController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public WarehouseDtoResponse createWarehouse(@RequestBody WarehouseDTO warehouseDTO)
     {
        return this.warehouseService.createWarehouse(warehouseDTO);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public WarehouseDtoResponse getWarehouseById(@PathVariable("id") Long id)
     {
         return this.warehouseService.findWarehouseById(id);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<?> deleteWarehouseById(@PathVariable("id") Long id)
     {
         this.warehouseService.deleteWarheouseById(id);
@@ -47,14 +44,12 @@ public class WarehouseController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<WarehouseDtoResponse> updateWarehouseById(@PathVariable("id") Long id,@RequestBody WarehouseDTO warehouseDTO)
     {
         return ResponseEntity.ok().body(this.warehouseService.updateWarehouseById(id,warehouseDTO));
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<List<WarehouseDtoResponse>> getAllWarehouses()
     {
         return ResponseEntity.ok().body(this.warehouseService.getAllWarehouses());
