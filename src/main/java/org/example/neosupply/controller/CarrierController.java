@@ -20,14 +20,12 @@ public class CarrierController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> createCarrier(@RequestBody CarrierDTO carrierDTO) {
         CarrierDtoResponse created = carrierService.createCarrier(carrierDTO);
         return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> updateCarrier(
             @PathVariable Long id,
             @RequestBody CarrierDTO carrierDTO) {
@@ -36,7 +34,6 @@ public class CarrierController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<List<CarrierDtoResponse>> getAllCarriers() {
         List<CarrierDtoResponse> carriers = carrierService.getAllCarriers();
         return ResponseEntity.ok(carriers);
@@ -50,28 +47,24 @@ public class CarrierController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<Void> deleteCarrier(@PathVariable Long id) {
         carrierService.deleteCarrier(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/activate")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> activateCarrier(@PathVariable Long id) {
         CarrierDtoResponse carrier = carrierService.activateCarrier(id);
         return ResponseEntity.ok(carrier);
     }
 
     @PostMapping("/{id}/deactivate")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> deactivateCarrier(@PathVariable Long id) {
         CarrierDtoResponse carrier = carrierService.deactivateCarrier(id);
         return ResponseEntity.ok(carrier);
     }
 
     @PostMapping("/{id}/assign-shipments")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> assignShipments(
             @PathVariable Long id,
             @RequestBody List<Long> shipmentIds) {

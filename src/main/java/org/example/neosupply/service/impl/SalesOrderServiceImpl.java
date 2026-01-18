@@ -15,6 +15,8 @@ import org.example.neosupply.mapper.SalesOrderMapper;
 import org.example.neosupply.repository.CarrierRepository;
 import org.example.neosupply.repository.SalesOrderRepository;
 import org.example.neosupply.service.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -126,6 +128,11 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         SalesOrder savedOrder = salesOrderRepository.save(salesOrder);
 
         return salesOrderMapper.toDtoResponse(savedOrder);
+    }
+
+    public Page<SalesOrder> getSalesOrderAll(Pageable pageable)
+    {
+        return this.salesOrderRepository.findAll(pageable);
     }
 
 

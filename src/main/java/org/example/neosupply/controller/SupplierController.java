@@ -22,14 +22,12 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     @GetMapping
     public ResponseEntity<List<SupplierDtoResponse>> getAllSuppliers()
     {
         return ResponseEntity.ok().body(this.supplierService.getAllSuppliers());
     }
 
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     @GetMapping("/{id}")
     public ResponseEntity<SupplierDtoResponse> getSupplierById(@PathVariable("id") Long id)
     {
@@ -37,20 +35,17 @@ public class SupplierController {
     }
 
 
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSupplierById(@PathVariable("id") Long id)
     {
         this.supplierService.deleteSupplierById(id);
         return ResponseEntity.ok().body("supplier is deleted");
     }
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<SupplierDtoResponse> updateSupplierById(@PathVariable("id") Long id, @RequestBody SupplierDTO supplierDTO)
     {
        return ResponseEntity.ok().body(this.supplierService.updateSupplier(id,supplierDTO));
     }
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     @PostMapping
     public ResponseEntity<SupplierDtoResponse> createSupplier(@RequestBody SupplierDTO supplierDTO)
     {
