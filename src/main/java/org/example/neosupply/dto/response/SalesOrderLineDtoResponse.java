@@ -15,5 +15,4 @@ public class SalesOrderLineDtoResponse {
 
     private ProductDtoResponse productDtoResponse;
 
-    private SalesOrderDtoResponse salesOrderDtoResponse;
 }

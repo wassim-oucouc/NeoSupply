@@ -8,8 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -38,12 +39,24 @@ public class SalesOrderController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<SalesOrder>> getSalesOrderAllPage(
+    public ResponseEntity<Page<SalesOrderDtoResponse>> getSalesOrderAllPage(
             @RequestParam Long size,
             @RequestParam Long page) {
         Pageable pageable = PageRequest.of(Math.toIntExact(size), Math.toIntExact(page));
 
         return ResponseEntity.ok().body(this.salesOrderService.getSalesOrderAll(pageable));
+    }
+
+    @PutMapping("cancel/{id}")
+    public ResponseEntity<SalesOrderDtoResponse> cancelOrderById(@PathVariable("id") Long salesOrderId)
+    {
+        return ResponseEntity.ok().body(this.salesOrderService.cancelSalesOrder(salesOrderId));
+    }
+
+    @GetMapping("/client/{id}")
+    public ResponseEntity<List<SalesOrderDtoResponse>> getSalesOrderByClientId(@PathVariable("id") Long clientId)
+    {
+        return ResponseEntity.ok().body(this.salesOrderService.getSalesOrdersByClientId(clientId));
     }
 
 

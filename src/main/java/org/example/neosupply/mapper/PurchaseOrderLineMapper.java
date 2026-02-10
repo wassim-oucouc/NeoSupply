@@ -2,9 +2,12 @@ package org.example.neosupply.mapper;
 
 
 import org.example.neosupply.dto.request.PurchaseOrderLineDTO;
+import org.example.neosupply.dto.response.PurchaseOrderLineDtoResponse;
+import org.example.neosupply.dto.response.SalesOrderLineDtoResponse;
 import org.example.neosupply.entity.Product;
 import org.example.neosupply.entity.PurchaseOrder;
 import org.example.neosupply.entity.PurchaseOrderLine;
+import org.example.neosupply.entity.SalesOrderLine;
 import org.example.neosupply.exceptions.ProductNotFoundException;
 import org.example.neosupply.exceptions.PurchaseOrderNotFoundException;
 import org.example.neosupply.repository.ProductRepository;
@@ -14,7 +17,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring" , uses = {ProductMapper.class})
 public abstract class PurchaseOrderLineMapper {
 
 
@@ -28,6 +31,12 @@ public abstract class PurchaseOrderLineMapper {
     @Mapping(source = "purchaseId", target = "purchaseOrder", qualifiedByName = "mapPurchaseOrder")
     @Mapping(source = "productId", target = "product", qualifiedByName = "mapProduct")
     public abstract  PurchaseOrderLine toEntity(PurchaseOrderLineDTO purchaseOrderLineDTO);
+
+    @Mapping(source = "product" , target = "productDtoResponses")
+    public abstract PurchaseOrderLineDtoResponse toDtoResponse(PurchaseOrderLine purchaseOrderLine);
+
+
+
 
     @Named("mapPurchaseOrder")
     public PurchaseOrder mapPurchaseOrder(Long purchaseId) {

@@ -15,7 +15,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = {PurchaseOrderLineMapper.class})
 public abstract class PurchaseOrderMapper {
 
     @Autowired
@@ -27,6 +27,7 @@ public abstract class PurchaseOrderMapper {
     @Mapping(source = "supplierId", target = "supplier",qualifiedByName = "mapSupplier")
     public abstract PurchaseOrder toEntity(PurchaseOrderDTO purchaseOrderDTO);
     @Mapping(source = "supplier", target = "supplierDtoResponse",qualifiedByName = "mapSupplierDtoResponse")
+    @Mapping(source  = "lines" , target  = "purchaseOrderLineDtoResponseList")
     public abstract PurchaseOrderDtoResponse toDtoResponse(PurchaseOrder purchaseOrder);
 
 

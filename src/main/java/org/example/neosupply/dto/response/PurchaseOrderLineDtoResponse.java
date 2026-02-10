@@ -15,6 +15,5 @@ public class PurchaseOrderLineDtoResponse{
     private Long id;
     private Long quantity;
     private BigDecimal unitPrice;
-    private List<Product> product;
-    private PurchaseOrder purchaseOrder;
+    private ProductDtoResponse productDtoResponses;
 }

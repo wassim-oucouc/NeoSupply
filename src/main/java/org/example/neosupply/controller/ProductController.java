@@ -25,7 +25,14 @@ public class ProductController {
         this.inventoryService = inventoryService;
     }
 
-    @PostMapping
+
+    @GetMapping
+    public ResponseEntity<List<ProductDtoResponse>> getAllProducts()
+    {
+        return ResponseEntity.ok().body(this.productService.getAllProducts());
+    }
+
+    @PostMapping("/create")
     public ResponseEntity<ProductDtoResponse> createProduct(@RequestBody ProductDTO productDTO) {
         ProductDtoResponse productDtoResponse = productService.createProduct(productDTO);
         return ResponseEntity.ok(productDtoResponse);
@@ -42,7 +49,6 @@ public class ProductController {
         ProductDtoResponse updatedProduct = productService.updateProductById(productDTO, id);
         return ResponseEntity.ok(updatedProduct);
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable Long id) {
         productService.deleteProductById(id);

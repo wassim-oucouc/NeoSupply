@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -90,5 +90,35 @@ public class UserServiceImpl implements UserService {
     public Users findUserById(Long id)
     {
         return this.userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User Not Found id " + id));
+    }
+    public List<UserDtoResponse> getWarehouseManagers()
+    {
+        List<Users> warehouseManagers = userRepository.findByRolesContaining((Role.ROLE_WAREHOUSE_MANAGER));
+        return warehouseManagers.stream()
+                .map(userMapper::toDtoResponse)
+                .toList();
+    }
+    public UserDtoResponse updateUserById(Long id,Users users)
+    {
+       Users usersFound =  this.userRepository.findById(id)
+               .orElseThrow(() -> new UserNotFoundException("user not found "));
+
+       usersFound.setNom(users.getNom());
+       usersFound.setEmail(users.getEmail());
+       usersFound.setActive(users.getActive());
+       usersFound.setEmail(users.getEmail());
+       usersFound.setRoles(users.getRoles());
+
+      Users usersCreated =  this.userRepository.save(usersFound);
+
+      return this.userMapper.toDtoResponse(usersCreated);
+
+    }
+    public void deleteUser(Long id)
+    {
+        Users usersFound =  this.userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("user not found "));
+
+        this.userRepository.delete(usersFound);
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring",uses = {SalesOrderLineMapper.class})
+@Mapper(componentModel = "spring",uses = {SalesOrderLineMapper.class, ProductMapper.class})
 public abstract class SalesOrderMapper {
 
     @Autowired
@@ -45,6 +45,7 @@ public abstract class SalesOrderMapper {
 
     @Mapping(source = "client", target = "clientDtoResponse", qualifiedByName = "mapClientDtoResponse")
     @Mapping(source = "warehouse", target = "warehouseDtoResponse", qualifiedByName = "mapWarehouseDtoResponse")
+    @Mapping(source = "salesOrderLines" , target = "salesOrderLineDtoResponses")
     public abstract SalesOrderDtoResponse toDtoResponse(SalesOrder salesOrder);
 
 
