@@ -40,7 +40,6 @@ public class CarrierController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('WAREHOUSE_MANAGER')")
     public ResponseEntity<CarrierDtoResponse> getCarrierById(@PathVariable Long id) {
         CarrierDtoResponse carrier = carrierService.getCarrierById(id);
         return ResponseEntity.ok(carrier);

@@ -4,6 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.example.neosupply.dto.response.UserDtoResponse;
+import org.example.neosupply.entity.Users;
+import org.example.neosupply.enumeration.Role;
+import org.example.neosupply.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +16,11 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class JwtUtil {
+
 
     @Value("${jwt.secret-key}")
     private String secret_key;
@@ -38,10 +45,11 @@ public class JwtUtil {
         return exctractAllClaims(token).getExpiration().before(new Date());
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, Set<Role> role,UserDtoResponse userDtoResponse) {
         Map<String,Object> claims = new HashMap<>();
-
+        claims.put("id",userDtoResponse.getId());
         claims.put("email",email);
+        claims.put("role",role);
 
         long now = System.currentTimeMillis();
         long expirationTime = 1000 * 60 * 60;

@@ -1,24 +1,23 @@
 package org.example.neosupply.controller;
 
-import jakarta.servlet.http.HttpSession;
 import org.example.neosupply.Security.JwtUtil;
 import org.example.neosupply.dto.request.UsersDTO;
 import org.example.neosupply.dto.response.UserDtoResponse;
 import org.example.neosupply.entity.RefreshToken;
+import org.example.neosupply.enumeration.Role;
 import org.example.neosupply.service.RefreshTokenService;
 import org.example.neosupply.service.UserService;
 import org.example.neosupply.service.impl.CustomUserDetailsService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -31,7 +30,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final CustomUserDetailsService customUserDetailsService;
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
 
     public AuthController(UserService userService, AuthenticationManager authenticationManager,JwtUtil jwtUtil, RefreshTokenService refreshTokenService, CustomUserDetailsService customUserDetailsService) {
@@ -62,9 +61,10 @@ public class AuthController {
 
         UserDetails userDetails =
                 customUserDetailsService.loadUserByUsername(token.getEmail());
+        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(token.getEmail());
 
         String newAccessToken =
-                jwtUtil.generateToken(userDetails.getUsername());
+                jwtUtil.generateToken(userDetails.getUsername(),userDtoResponse.getRoles(),userDtoResponse);
 
         return ResponseEntity.ok(Map.of(
                 "accessToken", newAccessToken
@@ -77,14 +77,14 @@ public class AuthController {
         String email = usersDTO.getEmail();
         String password = usersDTO.getPassword();
 
-        Authentication authentication = authenticationManager.authenticate(
+         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         email,
                         password
                 )
         );
        UserDtoResponse userDtoResponse = this.userService.getUserByEmail(email);
-       String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail());
+       String jwtToken = jwtUtil.generateToken(userDtoResponse.getEmail(),userDtoResponse.getRoles(),userDtoResponse);
         RefreshToken refreshToken =
                 refreshTokenService.create(usersDTO.getEmail());
 

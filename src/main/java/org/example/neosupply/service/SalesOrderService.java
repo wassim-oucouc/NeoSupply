@@ -8,11 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface SalesOrderService {
 
     public SalesOrderDtoResponse createSalesOrder(SalesOrderDTO salesOrderDTO);
     public SalesOrderDtoResponse approveSalesOrder(Long salesOrderId, Long carrierId);
-    public Page<SalesOrder> getSalesOrderAll(Pageable pageable);
+    public Page<SalesOrderDtoResponse> getSalesOrderAll(Pageable pageable);
+    public SalesOrderDtoResponse cancelSalesOrder(Long salesOrderId);
+    public List<SalesOrderDtoResponse> getSalesOrdersByClientId(Long clientId);
 
 }

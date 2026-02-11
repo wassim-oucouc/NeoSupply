@@ -31,18 +31,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         if (path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-ui") ||
-                path.startsWith("/webjars")) {
+                path.startsWith("/webjars") ||
+                path.startsWith("/api/auth") ||
+                path.startsWith("/api/client") ||
+                path.startsWith("/api/sales-orders")
+        ){
             filterChain.doFilter(request, response);
             return;
         }
 
+
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (request.getRequestURI().startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+
+
         String authHeader = request.getHeader("Authorization");
+
+        if(authHeader == null || !authHeader.startsWith("Bearer "))
+        {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             String email = jwtUtil.extractUsername(token);
 
             if (email != null && !jwtUtil.isTokenExpired(token)) {
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+                System.out.println("User email: " + userDetails.getUsername());
+                System.out.println("Authorities: " + userDetails.getAuthorities());
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());

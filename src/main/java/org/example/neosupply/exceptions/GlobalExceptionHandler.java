@@ -15,6 +15,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    @ExceptionHandler(QuantityNotEqualZeroException.class)
+    public ResponseEntity<String> QuantityNotEqualZeroException(QuantityNotEqualZeroException ex)
+    {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> IllegalArgumentException(IllegalArgumentException ex)
     {
@@ -50,4 +56,23 @@ public class GlobalExceptionHandler {
     {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<String> ClientNotFoundException(ClientNotFoundException ex)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SalesOrderNotFoundException.class)
+    public ResponseEntity<String> SalesOrderNotFoundException(SalesOrderNotFoundException ex)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SalesOrderCancellationException.class)
+    public ResponseEntity<String> SalesOrderCancellationException(SalesOrderCancellationException ex)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
 }

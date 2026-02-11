@@ -19,7 +19,6 @@ public abstract class CarrierMapper {
     @Autowired
     protected ShipmentMapper shipmentMapper;
 
-    @Mapping(target = "shipment", source = "shipmentDTOList")
     public abstract Carrier toEntity(CarrierDTO dto);
 
     @Mapping(target = "shipmentDtoResponseList", source = "shipment")

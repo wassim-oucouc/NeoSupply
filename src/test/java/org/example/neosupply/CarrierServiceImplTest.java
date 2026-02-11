@@ -130,11 +130,12 @@ class CarrierServiceImplTest {
                 .active(false)
                 .shipmentDtoResponseList(List.of())
                 .build();
+
         when(carrierMapper.toDtoResponse(carrier)).thenReturn(deactivatedDto);
 
         CarrierDtoResponse result = carrierService.deactivateCarrier(1L);
 
-        assertFalse(result.getActive()); // maintenant ça passera
+        assertFalse(result.getActive());
     }
 
 }
